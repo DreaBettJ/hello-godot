@@ -1,0 +1,155 @@
+[gd_scene load_steps=15 format=3 uid="uid://c40pmja2xeahq"]
+
+[ext_resource type="Script" path="res://script/main.gd" id="1_0lxls"]
+[ext_resource type="Script" path="res://script/player.gd" id="1_84agl"]
+[ext_resource type="Texture2D" uid="uid://dt3xughl0r3bv" path="res://art/playerGrey_up1.png" id="2_3cmqr"]
+[ext_resource type="PackedScene" uid="uid://ddkpjbkgmwvr" path="res://scene/mob.tscn" id="2_8p1ur"]
+[ext_resource type="Texture2D" uid="uid://ceb5vjpx4p6uj" path="res://art/playerGrey_up2.png" id="3_4enln"]
+[ext_resource type="Texture2D" uid="uid://b1hy7nvbv5t2h" path="res://art/playerGrey_walk1.png" id="4_a5lh1"]
+[ext_resource type="Texture2D" uid="uid://b0yjhpegtm514" path="res://art/playerGrey_walk2.png" id="5_ss8v7"]
+[ext_resource type="Script" path="res://script/hud.gd" id="8_gre7u"]
+[ext_resource type="FontFile" uid="uid://1weceb85cpqi" path="res://fonts/Xolonium-Regular.ttf" id="8_j7xjw"]
+[ext_resource type="AudioStream" uid="uid://ct1uqnjsbuvpj" path="res://art/House In a Forest Loop.ogg" id="10_ngu21"]
+[ext_resource type="AudioStream" uid="uid://bnxslwij7dmq5" path="res://art/gameover.wav" id="11_aiq8a"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1p0l8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_3cmqr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_4enln")
+}],
+"loop": true,
+"name": &"up",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_a5lh1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_ss8v7")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qul7o"]
+radius = 54.41
+height = 141.06
+
+[sub_resource type="Curve2D" id="Curve2D_jtww1"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 2, -4, 0, 0, 0, 0, 475, 5, 0, 0, 0, 0, 475, 707, 0, 0, 0, 0, 2, 710, 0, 0, 0, 0, 2, -4)
+}
+point_count = 5
+
+[node name="Node" type="Node"]
+script = ExtResource("1_0lxls")
+mob_scene = ExtResource("2_8p1ur")
+
+[node name="bg" type="ColorRect" parent="."]
+offset_right = 517.0
+offset_bottom = 758.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+color = Color(0.227451, 0.427451, 0.439216, 1)
+
+[node name="Player" type="Area2D" parent="."]
+position = Vector2(348, 137)
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_84agl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+sprite_frames = SubResource("SpriteFrames_1p0l8")
+animation = &"walk"
+frame_progress = 0.607303
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CapsuleShape2D_qul7o")
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(240, 450)
+
+[node name="MobPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_jtww1")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+position = Vector2(2, -4)
+rotation = 0.0190252
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("8_gre7u")
+
+[node name="ScoreLabel" type="Label" parent="HUD"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -22.5
+offset_right = 22.5
+offset_bottom = 78.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("8_j7xjw")
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Message" type="Label" parent="HUD"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -120.0
+offset_right = 20.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("8_j7xjw")
+theme_override_font_sizes/font_size = 64
+text = "Dodge the Creeps!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="StartButton" type="Button" parent="HUD"]
+offset_left = 159.0
+offset_top = 580.0
+offset_right = 336.0
+offset_bottom = 666.0
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("8_j7xjw")
+theme_override_font_sizes/font_size = 64
+text = "Start"
+
+[node name="MessageTimer" type="Timer" parent="HUD"]
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_ngu21")
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_aiq8a")
+
+[connection signal="body_entered" from="Player" to="Player" method="_on_body_entered"]
+[connection signal="hit" from="Player" to="." method="game_over"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
+[connection signal="pressed" from="HUD/StartButton" to="HUD" method="_on_start_button_pressed"]
+[connection signal="timeout" from="HUD/MessageTimer" to="HUD" method="_on_message_timer_timeout"]
